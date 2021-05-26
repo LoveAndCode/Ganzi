@@ -1,6 +1,4 @@
 # Ganzi
-
----
 A simple program that manages and generates welcome messages when you connect to a server.
 
 ## [Motivation]
