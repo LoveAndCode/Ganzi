@@ -2,12 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
-	"os"
-	"strings"
-
 	homedir "github.com/mitchellh/go-homedir"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"os"
 )
 
 var cfgFile string
@@ -27,57 +25,6 @@ to quickly create a Cobra application.`,
 	// Run: func(cmd *cobra.Command, args []string) { },
 }
 
-// Hello command
-var echoCmd = &cobra.Command{
-	Use:   "echo",
-	Short: "Echo Argument parameter",
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Hello Ganzi! args: => [" + strings.Join(args, " , ") + "]")
-	},
-}
-
-// Message Command
-var message = &cobra.Command{
-	Use:   "message",
-	Short: "scan",
-	Run: func(cmd *cobra.Command, args []string) {
-		text := strings.Join(args, "")
-		homePath, err := homedir.Dir()
-
-		if err != nil {
-			panic(err)
-		}
-
-		textFileName := "banner.txt"
-
-		fo, err := os.Create(homePath + "/" + textFileName)
-
-		if err != nil {
-			panic(err)
-		}
-		defer fo.Close()
-
-		_, err = fo.WriteString(text)
-
-		if err != nil {
-			panic(err)
-		}
-
-		// open profile
-		profile, err := os.OpenFile(homePath+"/.profile", os.O_APPEND|os.O_WRONLY, 0644)
-
-		defer profile.Close()
-
-		if err != nil {
-			panic(err)
-		}
-		_, err = profile.WriteString("cat " + homePath + "/" + textFileName)
-		if err != nil {
-			panic(err)
-		}
-	},
-}
-
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
@@ -92,9 +39,6 @@ func init() {
 	// will be global for your application.
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ganzi.yaml)")
-
-	rootCmd.AddCommand(message)
-	rootCmd.AddCommand(echoCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
