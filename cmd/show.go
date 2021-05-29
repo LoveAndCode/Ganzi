@@ -16,13 +16,39 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
+	"github.com/common-nighthawk/go-figure"
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
+	"io/ioutil"
+	"log"
+	"path"
+	"strings"
 )
 
 // showCmd represents the show command
 var showCmd = &cobra.Command{
 	Use:   "show",
 	Short: "Showing current welcome message",
+	Run: func(cmd *cobra.Command, args []string) {
+		homeDir, err := homedir.Dir()
+		if err != nil {
+			panic(err)
+		}
+		path := path.Join(homeDir, ".banner.txt")
+		log.Printf("read [%s]\n", path)
+		fileByteData, err := ioutil.ReadFile(path)
+		data := string(fileByteData)
+
+		if err != nil {
+			panic(err)
+		}
+
+		log.Println(data)
+		data = strings.ReplaceAll(data, "\n", "")
+		fontData := figure.NewFigure(data, "", true).String()
+		fmt.Println(fontData)
+	},
 }
 
 func init() {

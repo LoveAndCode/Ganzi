@@ -17,6 +17,7 @@ package cmd
 
 import (
 	"github.com/mitchellh/go-homedir"
+	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -65,12 +66,18 @@ func getCurrentShellType() string {
 }
 
 func shellConfiguration(dir string, targetFile string) {
+	configTitle := "# Ganzi Configuration"
 	filePath := path.Join(dir, targetFile)
+	configCheck := checkAlreadyConfigure(configTitle, filePath)
+	if configCheck {
+		log.Println("Shell Configuration Pass")
+		return
+	}
 	file, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY, 0644)
 	log.Printf("-- %s open and confguration begin\n", filePath)
 
 	// shell command for read banner file
-	configuration := "\n# Ganzi Configuration \n" +
+	configuration := configTitle + "\n" +
 		"if [[ -r \"$HOME/.banner.txt\" ]]; then\n" +
 		"	cat \"$HOME/.banner.txt\";\n" +
 		"fi"
@@ -87,10 +94,6 @@ func shellConfiguration(dir string, targetFile string) {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func co() {
-
 }
 
 func exists(dir string, filename string) bool {
@@ -119,6 +122,18 @@ func createBannerTextFile(text string, homeDir string) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func checkAlreadyConfigure(configTitle string, filePath string) bool {
+	data, err := ioutil.ReadFile(filePath)
+
+	if err != nil {
+		panic(err)
+	}
+
+	contents := string(data)
+
+	return strings.Contains(contents, configTitle)
 }
 
 func init() {
